@@ -6,6 +6,18 @@ from os.path import join as path_join
 from os.path import normpath
 
 
+def get_meta(sandbox, meta_file):
+    content = sandbox.get_file(meta_file).split('\n')
+    content = list(line for line in content if line)
+
+    meta = dict()
+    for line in content:
+        key, val = line.split(':')
+        meta[key] = val
+
+    return meta
+
+
 class Sandbox:
     ISOLATE_DIR = path_join('.', 'isolate')
     BOXES_DIR = 'boxes'
@@ -45,7 +57,7 @@ class Sandbox:
 
         # When called from __del__, running subprocess can cause troubles
         # self.run_isolate(['--cleanup', '--box-id', str(self.box_id)])
-        os.system('sudo ' + path_join(self.ISOLATE_DIR, 'isolate') + ' --cleanup --box-id ' + str(self.box_id))
+        os.system(path_join(self.ISOLATE_DIR, 'isolate') + ' --cleanup --box-id ' + str(self.box_id))
 
         shutil.rmtree(path_join(self.BOXES_DIR, str(self.box_id)))
 
@@ -163,38 +175,3 @@ class Sandbox:
         cmd_list += cmd.split()
 
         return self.run_isolate(cmd_list)
-
-# TESTING:
-sandbox = Sandbox()
-sandbox.init()
-
-print(normpath(path_join(os.getcwd(), sandbox.get_box_dir())))
-print("\n\n\n\n")
-
-sandbox.create_files([('main.cpp', """
-#include <iostream>
-
-using namespace std;
-
-int main() {
-
-    cout << "Successful run" << endl;
-
-    return 0;
-}
-
-""", ''), ('input.txt', 'rar kek', 'box'), ('output.txt', '', 'box')])
-print("\n\n\n\n")
-
-out, err = sandbox.run_cmd('g++ -o ' + path_join('.', 'box', 'main') + ' ' + 'main.cpp')
-if err != b'':
-    print('Compilation Error:\n' + str(err))
-    exit(0)
-print("\n\n\n\n")
-
-out, err = sandbox.run_exec("main", dirs=[('/box', 'box', 'rw')],
-                            meta_file=sandbox.get_box_dir('meta.txt'), stdin_file='input.txt',
-                            time_limit=1000, memory_limit=16)
-print(str(out) + '\n\n' + str(err))
-
-print("\n\n\n\n")
