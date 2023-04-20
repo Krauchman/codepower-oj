@@ -148,4 +148,4 @@ RUN make isolate
 
 WORKDIR /app
 
-CMD ["python", "/app/evaluation.py"]
+CMD ["python", "/app/evaluation/evaluation.py"]
