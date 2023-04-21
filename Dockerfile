@@ -135,4 +135,4 @@ RUN pip install -r requirements.txt
 
 COPY . /app
 
-CMD ["python", "/app/manage.py", "runserver"]
+CMD ["gunicorn", "--bind", "0.0.0.0:8000", "oj.wsgi"]

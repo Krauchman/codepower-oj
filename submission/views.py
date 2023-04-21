@@ -17,9 +17,9 @@ class EvaluateAPIView(APIView):
         code = request.data['code']
         user_id = request.data['userId']
 
-        submission_id = Submission.objects.order_by('-id')[:1].get().id
+        submission_id = Submission.objects.order_by('-id')[:1].get().id + 1
         Submission.objects.create(
-            id=submission_id + 1,
+            id=submission_id,
             code=code,
             date=datetime.now(),
             language=language,
