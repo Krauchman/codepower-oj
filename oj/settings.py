@@ -37,7 +37,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    'rest_framework',
+    'django_q',
+
     'submission.apps.SubmissionConfig',
+    'evaluation.apps.EvaluationConfig',
 ]
 
 MIDDLEWARE = [
@@ -126,3 +131,12 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+Q_CLUSTER = {
+    "name": "eval",
+    "orm": "default",  # Use Django's ORM + database for broker
+    'retry': 60*60*2,
+    'timeout': 60*60,
+    'workers': 2,
+}
