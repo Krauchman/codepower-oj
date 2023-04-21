@@ -9,6 +9,7 @@ class Submission(models.Model):
     problem_id = models.IntegerField(blank=True, null=True)
     user_id = models.IntegerField(blank=True, null=True)
     verdict = models.CharField(max_length=255, blank=True, null=True)
+    verdict_message = models.TextField(blank=True, null=True)
 
     class Meta:
         managed = False
