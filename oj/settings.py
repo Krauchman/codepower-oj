@@ -15,6 +15,7 @@ import environ
 
 env = environ.Env(
     DB_HOST=(str, '34.88.155.240'),
+    TASKS_BROKER_URL=(str, ''),
 )
 environ.Env.read_env()
 
@@ -145,8 +146,13 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 Q_CLUSTER = {
     "name": "eval",
-    "orm": "default",  # Use Django's ORM + database for broker
     'retry': 60*60*2,
     'timeout': 60*60,
-    'workers': 2,
+    'workers': 1,
 }
+
+tasks_broker_url = env('TASKS_BROKER_URL')
+if tasks_broker_url:
+    Q_CLUSTER['redis'] = tasks_broker_url
+else:
+    Q_CLUSTER["orm"] = "default"
